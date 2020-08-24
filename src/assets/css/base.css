@@ -1,0 +1,55 @@
+@import './nomalize.css';
+
+/* --变量名  可作为变量使用 */
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    -webkit-tab-highlight-color: transparent;
+    background: var(--color-background);
+    color: var(--color-text);
+    width: 100vw;
+}
+
+a {
+    text-decoration: none;
+}
+
+.clear-fix::after {
+    content: '';
+    clear: both;
+    display: block;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+}
+
+.clear-fix {
+    zoom: 1;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+@font-face {
+    font-family: 'iconfont';  /* project id 2023527 */
+    src: url('http://at.alicdn.com/t/font_2023527_y71ppp3uam.eot');
+    src: url('http://at.alicdn.com/t/font_2023527_y71ppp3uam.eot?#iefix') format('embedded-opentype'),
+    url('http://at.alicdn.com/t/font_2023527_y71ppp3uam.woff2') format('woff2'),
+    url('http://at.alicdn.com/t/font_2023527_y71ppp3uam.woff') format('woff'),
+    url('http://at.alicdn.com/t/font_2023527_y71ppp3uam.ttf') format('truetype'),
+    url('http://at.alicdn.com/t/font_2023527_y71ppp3uam.svg#iconfont') format('svg');
+  }
+.iconfont {
+    font-family: 'iconfont';
+}
