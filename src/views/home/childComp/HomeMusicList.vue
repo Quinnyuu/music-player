@@ -4,7 +4,8 @@
     <music-list class="list">
       <music-list-item v-for="(item, index) in songList" 
                        :key="index" class="list-item"
-                       :musicItem="item">
+                       :musicItem="item"
+                       :currentIndex="index">
         <div slot="list-img" class="list-img">
           <img :src="item.pic_small" />
         </div>
@@ -13,7 +14,6 @@
           <p class="list-author">{{item.author}}</p>
         </div>
         <div slot="list-icon" class="list-icon">
-          <span class="list-like iconfont">&#xe6b1;</span>
           <span class="list-play iconfont">&#xe6a9;</span>
         </div>
       </music-list-item>

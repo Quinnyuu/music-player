@@ -13,10 +13,15 @@ export default {
       type: Object,
       default: () => {},
     },
+    currentIndex: {
+      type: Number,
+      default: 0
+    }
   },
   methods: {
     musicClick() {
       this.$router.replace("/detail");
+      this.$store.state.currentIndex = this.currentIndex;
       this.$store.state.currentMusic = this.musicItem;
     },
   },

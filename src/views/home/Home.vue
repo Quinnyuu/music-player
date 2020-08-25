@@ -14,6 +14,7 @@ import HomeSwiper from "./childComp/HomeSwiper";
 import HomeMusicItem from "./childComp/HomeMusicList";
 import HomePlayer from "./childComp/HomePlayer";
 import HomeTopBar from "./childComp/HomeTopBar";
+import { getMusicList } from "network/song";
 export default {
   data() {
     return {
@@ -27,13 +28,18 @@ export default {
     HomeTopBar,
   },
   created() {
-    this.$store.commit("getMusicList");
-    setTimeout(() => {
-      this.songList = this.$store.state.songList;
-    },500);
+    this.getMusicList();
+    setTimeout(() =>{
+      this.$store.state.songList = this.songList;
+      console.log(this.$store.state.songList);
+    },500)
   },
   methods: {
-    
+    getMusicList() {
+      getMusicList().then((res) => {
+        this.songList = res.data.list;
+      });
+    },
   },
 };
 </script>

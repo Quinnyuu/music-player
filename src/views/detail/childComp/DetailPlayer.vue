@@ -1,7 +1,10 @@
 <template>
   <div class="detail-player">
     <player-item class="detail-player-item">
-        <span class="detail-like iconfont" slot="like">&#xe6b1;</span>
+        <div class="detail-like iconfont" slot="like" @click="likeClick">
+          <span v-if="!isLike">&#xe6b1;</span>
+          <span v-else style="color: #ed556a">&#xe6ae;</span>
+        </div>
         <span class="detail-find iconfont" slot="find">&#xe61d;</span>
     </player-item>
   </div>
@@ -10,9 +13,19 @@
 <script>
 import PlayerItem from "components/player/PlayerItem";
 export default {
+  data() {
+    return {
+      isLike: false
+    }
+  },
   components: {
     PlayerItem,
   },
+  methods: {
+    likeClick() {
+      this.isLike = !this.isLike;
+    }
+  }
 };
 </script>
 

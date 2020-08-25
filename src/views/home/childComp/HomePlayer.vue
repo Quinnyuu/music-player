@@ -1,28 +1,42 @@
 <template>
   <div>
-    <player>
-      <div class="disc" slot="disc"></div>
-      <player-item slot="player-item" class="home-player-item"/>
-    </player>
+    <div class="player">
+      <div class="disc" slot="disc">
+        <img :src="this.$store.state.currentMusic.pic_small" alt />
+      </div>
+      <div class="player-desc">
+          <span>{{getMusicName}}</span>
+      </div>
+      <player-item slot="player-item" class="home-player-item" />
+    </div>
   </div>
 </template>
 
 <script>
-import Player from "components/player/Player";
 import PlayerItem from "components/player/PlayerItem";
 export default {
   components: {
-    Player,
-    PlayerItem
+    PlayerItem,
   },
+  computed: {
+    getMusicName() {
+      return this.$store.state.currentMusic.title + this.$store.state.currentMusic.author;
+    }
+  }
 };
 </script>
 
 <style scoped>
+.player {
+  height: 80px;
+  border-radius: 50px 50px 0 0;
+  background: rgb(147, 213, 220);
+}
 .disc {
   position: absolute;
   display: flex;
   justify-content: center;
+  overflow: hidden;
   left: 30px;
   top: 10px;
   width: 60px;
@@ -39,6 +53,7 @@ export default {
   }
 }
 .disc::after {
+  position: absolute;
   display: block;
   align-self: center;
   content: "";
@@ -47,6 +62,7 @@ export default {
   border-radius: 50%;
   box-shadow: 2px 2px 3px rgba(73, 73, 73, 0.5) inset;
   background: rgb(253, 249, 242);
+  z-index: 1;
 }
 .home-player-item {
   position: absolute;
@@ -56,5 +72,14 @@ export default {
   height: 30px;
   font-size: 22px;
   color: #333;
+}
+.player-desc {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
