@@ -4,9 +4,6 @@
     <home-load class="load" v-if="isLoading" />
     <div
       class="swiper-content"
-      @touchStart="touchStart"
-      @touchMove="touchMove"
-      @touchEnd="touchEnd"
     >
       <home-swiper :songList="songList" ref="swiper" />
     </div>
@@ -45,18 +42,6 @@ export default {
         this.isLoading = false;
         this.$store.state.songList = this.songList;
       });
-    },
-    touchStart(e) {
-      console.log(1111);
-      console.log(e.touches[0].pageY);
-    },
-    touchMove(e) {
-      console.log(222);
-      console.log(e.touches[0].pageY);
-    },
-    touchEnd(e) {
-      console.log(333);
-      console.log(e.touches[0].pageY);
     },
   },
 };
