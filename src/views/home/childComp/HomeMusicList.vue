@@ -15,7 +15,7 @@
           <p class="list-author">{{item.author}}</p>
         </div>
         <div slot="list-icon" class="list-icon">
-          <span class="list-play iconfont">&#xe6a9;</span>
+          <span class="list-play icon">&#xe6a9;</span>
         </div>
       </music-list-item>
     </music-list>
@@ -39,8 +39,8 @@ export default {
 </script>
 
 <style scoped>
-.iconfont {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.icon {
+  font-family: 'iconfont';
 }
 .home-list {
   position: relative;
