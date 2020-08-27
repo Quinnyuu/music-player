@@ -5,7 +5,7 @@
           <span v-if="!isLike">&#xe6b1;</span>
           <span v-else style="color: #ed556a">&#xe6ae;</span>
         </div>
-        <span class="detail-find iconfont" slot="find">&#xe61d;</span>
+        <span class="detail-find iconfont" slot="find" >&#xe61d;</span>
     </player-item>
   </div>
 </template>
@@ -45,5 +45,8 @@ export default {
   transform: translateX(-50%);
   font-size: 30px;
   color: rgb(0, 139, 139);
+}
+.iconfont {
+  font-family: 'iconfont';
 }
 </style>

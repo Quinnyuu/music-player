@@ -2,9 +2,7 @@
   <div class="home">
     <home-top-bar class="home-top-bar" />
     <home-load class="load" v-if="isLoading" />
-    <div
-      class="swiper-content"
-    >
+    <div class="swiper-content">
       <home-swiper :songList="songList" ref="swiper" />
     </div>
     <div class="list-content">

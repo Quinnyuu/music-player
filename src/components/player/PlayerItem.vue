@@ -58,4 +58,7 @@ export default {
 .pause {
   flex: 1;
 }
+.iconfont {
+  font-family: 'iconfont';
+}
 </style>
