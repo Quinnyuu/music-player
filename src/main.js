@@ -7,6 +7,7 @@ Vue.config.productionTip = false
 //事件总线
 Vue.prototype.$bus=new Vue()
 
+import './assets/fonts/iconfont/iconfont.css'
 new Vue({
   router,
   store,
