@@ -30,11 +30,12 @@ export default {};
   font-size: 30px;
   font-weight: 700;
   color: #fff;
-  background: darkcyan;
+  background: #008b8b;
 }
 .top-bar {
   position: relative;
   display: flex;
+  overflow: hidden;
   height: 100px;
   line-height: 80px;
   text-align: center;

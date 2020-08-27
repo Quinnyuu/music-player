@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
     songList: [],
     currentMusic: {},
-    currentIndex: 0
+    currentIndex: 0,
   },
   mutations: {
     getCurrentMusic(state) {

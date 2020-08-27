@@ -3,7 +3,8 @@
     <div class="list-title">A list of top 10</div>
     <music-list class="list">
       <music-list-item v-for="(item, index) in songList" 
-                       :key="index" class="list-item"
+                       :key="index" 
+                       class="list-item"
                        :musicItem="item"
                        :currentIndex="index">
         <div slot="list-img" class="list-img">
@@ -40,7 +41,7 @@ export default {
 <style scoped>
 .home-list {
   position: relative;
-  top: 50%;
+  top: 0;
 }
 .list-title {
   position: absolute;

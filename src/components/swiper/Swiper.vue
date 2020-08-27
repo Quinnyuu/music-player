@@ -24,8 +24,17 @@ export default {
   transform-style: preserve-3d;
   width: 130px;
   height: 130px;
-  top: 23%;
   left: 50%;
+  top: 15%;
   transform: translateX(-50%);
+  /* animation: rotate 3s infinite; */
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
 }
 </style>

@@ -32,7 +32,7 @@ export default {
 <style scoped>
 .detail-player {
   position: absolute;
-  top: 85%;
+  top: 88%;
   text-align: center;
   width: 100%;
   height: 100px;

@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <detail-top-bar />
+    <detail-top-bar @stop="stop"/>
     <div class="content" v-if="currentMusicDetail !== null">
       <div class="detail-img">
         <img :src="currentMusicDetail.songPic" alt />
@@ -9,13 +9,24 @@
         <div class="glorious1"></div>
         <div class="glorious2"></div>
       </div>
+      <div class="detail-song-info">
+        <span>{{currentMusicDetail.songName}}</span>--
+        <span>{{currentMusicDetail.artistName}}</span>
+      </div>
       <div class="time">
-        <span class="play-time">0:00</span>
+        <span class="play-time">{{playTime | formatTime}}</span>
         <span></span>
         <span class="all-time">{{currentMusicDetail.time | formatTime}}</span>
       </div>
-      <audio :src="currentMusicDetail.songLink"></audio>
-      <canvas id="canvas"></canvas>
+      <!-- <audio
+        src
+        ref="audio"
+        crossorigin="anonymous"
+        @canplay="getDuration"
+        @timeupdate="getCurrentTime"
+        loop
+      ></audio>-->
+      <canvas id="canvas" class="canvas">Your browser does not support Canvas tag.</canvas>
     </div>
     <detail-player />
   </div>
@@ -30,6 +41,14 @@ export default {
     return {
       id: this.$store.state.currentMusic.song_id,
       currentMusicDetail: {},
+      isPlay: true,
+      currentTime: 0,
+      audioContext: null,
+      analyser: null,
+      source: null,
+      offset: 0, //当前音频的偏移量
+      startTime: null, // 音频开始的时间
+      playTime: 0
     };
   },
   components: {
@@ -38,10 +57,27 @@ export default {
   },
   created() {
     this.getMusicDetail(this.id);
+    //点击上一首和下一首时加载数据
     this.$bus.$on("getCurrentMusicId", () => {
       this.getCurrentMusicId();
       this.getMusicDetail(this.id);
     });
+    this.$bus.$on("playControl", (isPlay) => {
+      if (!isPlay) {
+        this.pause();
+      } else {
+        this.play();
+      }
+    });
+  },
+  mounted() {
+    this.createAudioContext();
+    //播放进度获取
+    const getPlayTime = () => {
+      window.requestAnimationFrame(getPlayTime);
+      this.playTime = this.getPosition();
+    }
+    getPlayTime();
   },
   methods: {
     getCurrentMusicId() {
@@ -50,31 +86,120 @@ export default {
     getMusicDetail(id) {
       getMusicDetail(id).then((res) => {
         this.currentMusicDetail = res.data;
-        console.log(this.currentMusicDetail);
+        this.getAudio();
       });
     },
-    //音频的处理
-    getAudioInfo() {
-      //创建音频上下文
+    //创建web audio api上下文
+    createAudioContext() {
+      //获取音频文件
       const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const audioContext = new AudioContext();
-      const audioElement = document.querySelector("audio");
-      //定义音频上下文的音频源节点
-      const source = audioContext.createMediaElementSource(audioElement);
-      //定义一个音频上下文的 数据分析与可视化节点
-      var analyser = audioContext.createAnalyser();
-      analyser.minDecibels = -90; //分析结果的最小阈值
-      analyser.maxDecibels = -10; //分析结果的最大阈值
-      analyser.smoothingTimeConstant = 0.85; //最后一个分析帧的平均常数
-      //连接各节点
-      source.connect(analyser);
-      analyser.connect(audioCtx.destination);
+      this.audioContext = new AudioContext(); //创建上下文环境
+      //创建analyserNode获取音频频率数据
+      this.analyser = this.audioContext.createAnalyser();
+      this.analyser.fftSize = 256; //设置傅里叶系数
     },
+    //音频的处理
+    getAudio() {
+      this.stop(); //开始前检查有没有音频占用
+      this.play(); //播放当前音乐的音频
+      this.getCanvas(); //绘制波形图
+    },
+    //音频的播放
+    play() {
+      if (!this.currentMusicDetail || this.source) {
+        return; //当有资源时不播放
+      }
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", this.currentMusicDetail.songLink, true);
+      // 设置响应类型为 arraybuffer
+      xhr.responseType = "arraybuffer";
+      const that = this;
+      xhr.onload = function () {
+        that.source = that.audioContext.createBufferSource();
+        // 对响应内容进行解码
+        that.audioContext.decodeAudioData(xhr.response, function (buffer) {
+          // 将解码后得到的值赋给buffer
+          that.source.buffer = buffer;
+          // 音频==》分析器==》扬声器
+          that.source.connect(that.analyser);
+          that.analyser.connect(that.audioContext.destination);
+          //播放音频
+          that.startTime = that.audioContext.currentTime;
+          that.source.start(0, that.offset);
+        });
+      };
+      xhr.send();
+    },
+    //音频的暂停
+    pause() {
+      if (!this.currentMusicDetail || !this.source) return;
+      this.source.stop(0);
+      this.source.disconnect(0);
+      this.source = null;
+      this.offset = this.getPosition();
+      this.startTime = null;
+    },
+    //音频的停止
+    stop() {
+      this.pause();
+      this.offset = 0;
+    },
+    //获得暂停的位置
+    getPosition() {
+      return (
+        this.offset +
+        (this.startTime !== null
+          ? this.audioContext.currentTime - this.startTime
+          : 0)
+      );
+    },
+    //音频图的绘制
+    getCanvas() {
+      //创建canvas对象
+      const canvas = document.getElementById("canvas");
+      const cxt = canvas.getContext("2d");
+      const WIDTH = canvas.width;
+      const HEIGHT = canvas.height;
+      const lineWidth = 4;
+      const gap = 6;
+      const maxNum = Math.round(WIDTH / (lineWidth + gap));
+      cxt.strokeStyle = "red";
+      cxt.lineCap = "round";
+      cxt.lineWidth = lineWidth;
+      const that = this;
+      function render() {
+        cxt.clearRect(0, 0, WIDTH, HEIGHT); //清空画布
+        //that.analyser.frequencyBinCount是fftSize的一半
+        const dataArray = new Uint8Array(that.analyser.frequencyBinCount);
+        that.analyser.getByteFrequencyData(dataArray); //获取音频字节流
+        for (let i = 0; i < maxNum; i++) {
+          cxt.strokeStyle = "#008b8b";
+          const value = Math.round((dataArray[i] / 128) * 20);
+          cxt.beginPath();
+          cxt.moveTo(i * (lineWidth + gap) + gap / 2, HEIGHT / 2);
+          cxt.lineTo(i * (lineWidth + gap) + gap / 2, HEIGHT / 2 - value - 2);
+          cxt.stroke();
+          cxt.beginPath();
+          cxt.moveTo(i * (lineWidth + gap) + gap / 2, HEIGHT / 2);
+          cxt.lineTo(i * (lineWidth + gap) + gap / 2, HEIGHT / 2 + value + 2);
+          cxt.stroke();
+        }
+        window.requestAnimationFrame(render); //递归调用渲染
+      }
+      // requestAnimationFrame()用来渲染动画帧，此时渲染第一帧
+      window.requestAnimationFrame(render);
+    },
+  },
+  computed: {
+    
   },
   filters: {
     formatTime(time) {
       let minute = parseInt(time / 60);
       let second = parseInt(time % 60);
+      if (second < 10) {
+        second = "0" + second;
+      }
       let ftime = minute + ":" + second;
       return ftime;
     },
@@ -83,6 +208,9 @@ export default {
 </script>
 
 <style scoped>
+.content {
+  height: calc(100vh - 200px);
+}
 .detail {
   position: relative;
   width: 100vw;
@@ -97,7 +225,7 @@ export default {
   height: 200px;
   border-radius: 50%;
   overflow: hidden;
-  background: rgb(0, 139, 139);
+  background: #008b8b;
   z-index: 1;
 }
 
@@ -121,7 +249,7 @@ export default {
   width: 300px;
   height: 100px;
   border-radius: 80%;
-  background: rgba(176, 232, 236, 0.678);
+  background: hsla(184, 61%, 81%, 0.678);
   animation: narrow 2s infinite;
   box-shadow: 0 0 12px rgba(211, 219, 219, 0.6);
   z-index: 1;
@@ -162,12 +290,19 @@ export default {
     height: 250px;
   }
 }
+.detail-song-info {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
 .time {
   position: absolute;
   display: flex;
   justify-content: space-between;
   left: 50%;
-  top: 75%;
+  top: 80%;
   transform: translateX(-50%);
   width: 100px;
   font-weight: 600;
@@ -178,6 +313,14 @@ export default {
   top: -10px;
   border-width: 20px 3px;
   border-style: solid;
-  border-color: transparent transparent rgb(147, 213, 220) transparent;
+  border-color: transparent transparent #93d5dc transparent;
+}
+.canvas {
+  position: absolute;
+  top: 63%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 100px;
 }
 </style>

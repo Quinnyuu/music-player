@@ -13,6 +13,7 @@ export default {
   methods: {
     backClick() {
       this.$router.replace("/home");
+      this.$emit('stop')
     },
   },
 };
