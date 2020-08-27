@@ -40,16 +40,3 @@ a {
 .right {
     float: right;
 }
-
-/* @font-face {
-    font-family: 'iconfont';  /* project id 2023527 */
-    /* src: url('http://at.alicdn.com/t/font_2023527_qrprk3gvpyr.eot');
-    src: url('http://at.alicdn.com/t/font_2023527_qrprk3gvpyr.eot?#iefix') format('embedded-opentype'),
-    url('http://at.alicdn.com/t/font_2023527_qrprk3gvpyr.woff2') format('woff2'),
-    url('http://at.alicdn.com/t/font_2023527_qrprk3gvpyr.woff') format('woff'),
-    url('http://at.alicdn.com/t/font_2023527_qrprk3gvpyr.ttf') format('truetype'),
-    url('http://at.alicdn.com/t/font_2023527_qrprk3gvpyr.svg#iconfont') format('svg');
-  } */ */
-.iconfont {
-    font-family: 'iconfont';
-}
