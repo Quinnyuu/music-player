@@ -6,12 +6,6 @@ export function request(config) {
         timeout: 30000
     })
     instance.interceptors.request.use(res => {
-        // let defaultParams = {
-        //     app_id: 'trko8ptipmkjblks',
-        //     app_secret: 'Q2N3UUFiaysyVmwxYko0bHNvYkR0dz09'
-        // }
-        // res.data = Object.assign(defaultParams, res.data);
-        // console.log(res);
         return res;
         },
         err => {
