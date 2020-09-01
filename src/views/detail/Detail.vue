@@ -85,6 +85,9 @@ export default {
     },
     getMusicDetail(id) {
       getMusicDetail(id).then((res) => {
+        if(res.code !== 1) {
+          console.log(res.msg);
+        }
         this.currentMusicDetail = res.data;
         this.getAudio();
       });
